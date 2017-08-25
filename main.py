@@ -21,11 +21,11 @@ class SubwayStatusHandler:
     def _received_data_processor(inp_data):
         # replace html escape characters in first pass-through
         esc_reps = {"&amp;nbsp;": " ", "&lt;": "<", "&gt;": ">", "&nbsp;": " ", "&amp;": "&", "Â": ""}
-        esc_reps = dict((re.escape(k), v) for k, v in esc_reps.items())
-        esc_pattern = re.compile("|".join(esc_reps.keys()))
-        out_data = esc_pattern.sub(lambda m: esc_reps[re.escape(m.group(0))], inp_data)
+        esc_reps = dict((re.escape(k), v) for k, v in esc_reps.items()) # escape everything except except ASCII letters, numbers and '_'.
+        esc_pattern = re.compile("|".join(esc_reps.keys()))  # create a regex object from keys
+        out_data = esc_pattern.sub(lambda m: esc_reps[re.escape(m.group(0))], inp_data)  # for each match, find the string to replace it with in our dict
 
-        # replace line breaks in second pass-through
+        # replace line breaks in second pass-through (same process as above)
         more_reps = {"<br>": "\n"}
         more_reps = dict((re.escape(k), v) for k, v in more_reps.items())
         more_patterns = re.compile("|".join(more_reps.keys()))
