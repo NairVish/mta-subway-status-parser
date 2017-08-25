@@ -3,6 +3,7 @@ import re
 from bs4 import BeautifulSoup
 # need lxml
 
+
 class SubwayStatusHandler:
     STATUS_URL = "http://web.mta.info/status/serviceStatus.txt"
     LINES = ["123", "456", "7", "ACE", "BDFM", "G", "JZ", "NQR", "S", "SIR"]
@@ -35,10 +36,18 @@ class SubwayStatusHandler:
 
         return out_data
 
-subway_line_data = SubwayStatusHandler().status_data
-for line in subway_line_data:
-    line_name = line.find("name")
-    line_status = line.find("status")
-    print(str(line_name.text) + " - " + str(line_status.text))
-    status_description = line.find("text")
-    print(status_description.getText())
+    def get_lines_with_text(self):
+        r = {}
+        for line in self.status_data:
+            line_name = line.find("name").getText()
+            line_status = line.find("status").getText()
+            status_description = line.find("text").getText()
+            r[line_name] = (line_status, status_description)
+        return r
+
+subway_line_data = SubwayStatusHandler().get_lines_with_text()
+print(subway_line_data)
+for l, s in subway_line_data.items():
+    print(l + " - " + s[0])
+    print(s[1])
+
