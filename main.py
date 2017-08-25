@@ -14,8 +14,7 @@ class SubwayStatusHandler:
         r = requests.get(self.STATUS_URL)
         raw_data = self._received_data_processor(r.text)
         soup = BeautifulSoup(raw_data, 'lxml')
-        subway_line_data = soup.find("service").find("subway").findAll("line")
-        self.status_data = subway_line_data
+        self.status_data = soup.find("service").find("subway").findAll("line")
 
     @staticmethod
     def _received_data_processor(inp_data):
@@ -30,6 +29,9 @@ class SubwayStatusHandler:
         more_reps = dict((re.escape(k), v) for k, v in more_reps.items())
         more_patterns = re.compile("|".join(more_reps.keys()))
         out_data = more_patterns.sub(lambda m: more_reps[re.escape(m.group(0))], out_data)
+
+        # strip out any leading whitespace from all of the lines
+        out_data = '\n'.join([line.lstrip() for line in out_data.split('\n')])
 
         return out_data
 
